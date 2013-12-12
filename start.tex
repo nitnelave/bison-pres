@@ -1,0 +1,81 @@
+\begin{frame}
+  \frametitle{Getting started}
+    \begin{itemize}[<+->]
+      \item Prologue
+      \item Grammar
+      \item Epilogue
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Prologue}
+    \begin{itemize}[<+->]
+      \item Declarations
+      \begin{itemize}[<+->]
+        \item \%defines
+        \item \%expect 0
+        \item \%skeleton \"lalr1.cc\"
+      \end{itemize}
+      \item Includes
+      \begin{itemize}[<+->]
+        \item C code at the top of the parser
+      \end{itemize}
+      \item Token list
+      \begin{itemize}[<+->]
+        \item Token list
+        \item #define
+        \item Prototypes (yylex)
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar}
+    \begin{itemize}[<+->]
+      \item Rules
+      \item Actions
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar Rules}
+    \begin{itemize}[<+->]
+      \item Similar to BNF
+      \item No compact way to describe optional elements/lists
+      \item Beware of the \%empty!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar Actions}
+    \begin{itemize}[<+->]
+      \item C/C++ code run when the rule is recognized
+      \item Create an AST, compute the result of an expression...
+      \item Usually at the end
+      \item Can be mid-rule actions (lexer context change, ...)
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Epilogue}
+    \begin{itemize}[<+->]
+      \item Raw C/C++ code included at the end of the parser
+      \item main() to make it a stand-alone parser
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Manual}
+    \begin{itemize}[<+->]
+      \item GNU Bison manual
+      \item Complete description of the parser
+      \item Thorough examples (C/C++)
+      \item Explanation of every option, parameter, ...
+    \end{itemize}
+\end{frame}
+
+
+%FIXME: C++ specifics
+
