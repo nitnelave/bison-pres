@@ -1,0 +1,91 @@
+
+\begin{frame}
+  \frametitle{Parsers: LL, LR, LALR}
+    \begin{itemize}[<+->]
+      \item Recognize words of a language
+      \item Run actions for the words
+      \item Ex: create an AST
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parsers: LL, LR, LALR}
+    Parser LL
+    \begin{itemize}[<+->]
+      \item Left-to-right
+      \item Leftmost derivation
+      \item Top-down
+      \item Not very powerful
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parsers: LL, LR, LALR}
+    Parser LR
+    \begin{itemize}[<+->]
+      \item Left-to-right
+      \item Rightmost derivation
+      \item Bottom-up
+      \item Sometimes heavy
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Parsers: LL, LR, LALR}
+    Parser LALR
+    \begin{itemize}[<+->]
+      \item Simplified LR
+      \item Less memory requirements
+      \item Less powerful
+      \item Often completed by hand-written code
+    \end{itemize}
+\end{frame}
+
+%FIXME: grammar tricks, monoids, semi-groups
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item if a then if b then c else d
+      \item To whom does the else belong?
+      \item Shift/reduce conflict
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    %FIXME: code format?
+    stmt:
+      condition
+    | exp
+
+    condition:
+      \"if\" exp \"then\" stmt
+    | \"if\" exp \"then\" stmt \"else\" stmt
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Precedence solution
+      \item \%precedence \"then\"
+      \item \%precedence \"else\"
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Associativity solution
+      \item \%right \"then\" \"else\"
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Changing the language
+      \item if a then if b then c fi else d fi
+      \item Often not acceptable
+    \end{itemize}
+\end{frame}
