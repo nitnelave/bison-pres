@@ -257,6 +257,8 @@ Grammar is as follows:
  Rule4:  + has less precedence than *
 \end{verbatim}
   \vfill
+Another, unrelated example:
+  \vfill
   \begin{center}
     %FIXME
     %\includegraphics[scale=0.4]{example-reduce}
@@ -275,6 +277,27 @@ Grammar is as follows:
   the \textbf{Look-Ahead LR} (LALR). The simplification that takes place results
   in a parser with significantly reduced memory requirements but decreased
   language-recognition power. These parsers are seldom written by hand.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Yet Another Compiler Compiler}
+  \textbf{YACC} is an LALR parser generator. It was developed in 1970 by Stephen C.
+  Johnson at AT\&T Corporation.
+
+  \vfill
+
+  The \textbf{Berkeley} implementation of Yacc quickly became more popular than
+  AT\&T Yacc itself because of lack of reuse restrictions and performance.
+
+  \vfill
+
+  GNU Bison was originally written by Robert Corbett in 1988. Bison was made
+  Yacc-compatible by Richard Stallman.
+
+  \vfill
+
+  The \textbf{IEEE POSIX P1003.2} standard defines the functionality and requirements for
+  both \texttt{Lex} and \texttt{Yacc}.
 \end{frame}
 
 \subsection{Shift/Reduce automaton}
