@@ -6,6 +6,7 @@
 \usecolortheme{crane}
 \usefonttheme{serif}
 \usepackage{listings}
+\usepackage{multicol}
 \usepackage{fixltx2e}
 
 
@@ -39,6 +40,19 @@
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 
+\AtBeginSubsection[]
+{
+\begin{frame}<beamer>{Table of Contents}
+  \begin{multicols}{2}
+\tableofcontents[currentsection,currentsubsection,
+    hideothersubsections,
+    sectionstyle=show/shaded,
+    subsectionstyle=show/shaded,
+]
+  \end{multicols}
+\end{frame}
+}
+
 \begin{document}
 
 \title{GNU Bison}
@@ -57,6 +71,8 @@ Valentin Tolmer}
 \end{frame}
 
 \section{Parsers}
+
+\subsection{Grammars and parsers}
 
 \begin{frame}
   \frametitle{What is a parser?}
@@ -96,8 +112,6 @@ Valentin Tolmer}
     \includegraphics[scale=0.4]{lexer_parser}
   \end{center}
 \end{frame}
-
-\subsection{Grammars and parsers}
 
 \begin{frame}
   \frametitle{Grammars and types of parsers}
@@ -203,5 +217,19 @@ parsers are examples of bottom-up parsers.
     \includegraphics[scale=0.3]{sillyastthing}
   \end{center}
 \end{frame}
+
+\subsection{Look-ahead parsing}
+
+\subsection{Shift/Reduce automaton}
+
+\subsection{Formal grammars}
+
+\section{GNU Bison internals}
+
+\subsection{GNU M4}
+
+\begin{frame}
+\end{frame}
+
 
 \end{document}
