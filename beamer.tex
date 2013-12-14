@@ -224,17 +224,55 @@ parsers are examples of bottom-up parsers.
   \end{center}
 \end{frame}
 
-\subsection{Look-ahead parsing}
+\begin{frame}
+  \frametitle{Lookahead parsing}
+  \textbf{Lookahead} establishes the maximum incoming tokens that a parser can
+  use to decide which rule it should use.  It is often explicitly indicated by
+  affixing the lookahead to the algorithm name in parentheses, such as LALR(1)
+
+  \vfill
+
+Lookahead has two advantages:
+\begin{itemize}
+  \item It helps the parser take the correct action in case of
+    \textbf{conflicts}. For example, parsing the \texttt{if} statement in the
+    case of an \texttt{else} clause.
+
+  \item It eliminates many duplicate states and eases the burden of an extra
+    stack. A C language non-lookahead parser will have around 10,000 states. A
+    lookahead parser will have around 300 states.
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Lookahead parsing: examples}
+  Parsing the Expression 1 + 2 * 3.
+  \vfill
+\begin{verbatim}
+Grammar is as follows:
+ Rule1:  E -> E + E
+ Rule2:  E -> E * E
+ Rule3:  E -> number
+ Rule4:  + has less precedence than *
+\end{verbatim}
+  \vfill
+  \begin{center}
+    \includegraphics[scale=0.4]{example-reduce}
+  \end{center}
+\end{frame}
 
 \begin{frame}
-  \frametitle{Parsers: LL, LR, LALR}
-    Parser LALR
-    \begin{itemize}[<+->]
-      \item Simplified LR
-      \item Less memory requirements
-      \item Less powerful
-      \item Often completed by hand-written code
-    \end{itemize}
+  \frametitle{LALR}
+  In 1965, Donald Knuth invented the \textbf{LR} parser, which can recognize any
+  deterministic context-free language in linear-bounded time. However, rightmost
+  derivation has \textbf{very large memory requirements}
+
+  \vfill
+
+  In 1969, Frank DeRemer proposed a simplified version of the LR parser, namely
+  the \textbf{Look-Ahead LR} (LALR). The simplification that takes place results
+  in a parser with significantly reduced memory requirements but decreased
+  language-recognition power. These parsers are seldom written by hand.
 \end{frame}
 
 \subsection{Shift/Reduce automaton}
