@@ -40,8 +40,7 @@
   title=\lstname                   % show the filename of files included with \lstinputlisting; also try caption instead of title
 }
 
-\AtBeginSubsection[]
-{
+\AtBeginSubsection[]{%
 \begin{frame}<beamer>{Table of Contents}
   \begin{multicols}{2}
 \tableofcontents[currentsection,currentsubsection,
@@ -58,7 +57,7 @@
 \title{GNU Bison}
 \author{Theophile Ranquet
 Valentin Tolmer}
-\institute{
+\institute{%
   Ecole Pour l'Informatique et les Techniques Avancées\\
   \texttt{ranquet@lrde.epita.fr}\\
   \texttt{nitnelave1@gmail.com}
@@ -220,9 +219,138 @@ parsers are examples of bottom-up parsers.
 
 \subsection{Look-ahead parsing}
 
+\begin{frame}
+  \frametitle{Parsers: LL, LR, LALR}
+    Parser LALR
+    \begin{itemize}[<+->]
+      \item Simplified LR
+      \item Less memory requirements
+      \item Less powerful
+      \item Often completed by hand-written code
+    \end{itemize}
+\end{frame}
+
 \subsection{Shift/Reduce automaton}
 
 \subsection{Formal grammars}
+
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item if a then if b then c else d
+      \item To whom does the else belong?
+      \item Shift/reduce conflict
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dangling else problem}
+\begin{verbatim}
+    stmt:
+      condition
+    | exp
+
+    condition:
+      "if" exp "then" stmt
+    | "if" exp "then" stmt "else" stmt
+\end{verbatim}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Precedence solution
+      \item \texttt{\%precedence "then"}
+      \item \texttt{\%precedence "else"}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Associativity solution
+      \item \texttt{\%right "then" "else"}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}[<+->]
+      \item Changing the language
+      \item if a then if b then c fi else d fi
+      \item Often not acceptable
+    \end{itemize}
+\end{frame}
+
+\section{Getting started}
+
+\begin{frame}
+  \frametitle{Getting started}
+    \begin{itemize}[<+->]
+      \item Prologue
+      \item Grammar
+      \item Epilogue
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Prologue}
+    \begin{itemize}[<+->]
+      \item Declarations
+      \begin{itemize}[<+->]
+        \item \texttt{\%defines}
+        \item \texttt{\%expect 0}
+        \item \texttt{\%skeleton "lalr1.cc"}
+      \end{itemize}
+      \item Includes
+      \begin{itemize}[<+->]
+        \item C code at the top of the parser
+      \end{itemize}
+      \item Token list
+      \begin{itemize}[<+->]
+        \item Token list
+        \item \texttt{\#define}
+        \item Prototypes (yylex)
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar}
+    \begin{itemize}[<+->]
+      \item Rules
+      \item Actions
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar Rules}
+    \begin{itemize}[<+->]
+      \item Similar to BNF
+      \item No compact way to describe optional elements/lists
+      \item Beware of the \%empty!
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Grammar Actions}
+    \begin{itemize}[<+->]
+      \item C/C++ code run when the rule is recognized
+      \item Create an AST, compute the result of an expression\ldots
+      \item Usually at the end
+      \item Can be mid-rule actions (lexer context change, \ldots)
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Epilogue}
+    \begin{itemize}[<+->]
+      \item Raw C/C++ code included at the end of the parser
+      \item main() to make it a stand-alone parser
+    \end{itemize}
+\end{frame}
 
 \section{GNU Bison internals}
 
@@ -231,5 +359,48 @@ parsers are examples of bottom-up parsers.
 \begin{frame}
 \end{frame}
 
+\section{Working with GNU}
+
+\begin{frame}
+  \frametitle{Contributing}
+    \begin{itemize}[<+->]
+      \item Open source
+      \item Peer review (quality standards)
+      \item Testsuite
+      \item Patches (e-mail)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Coding style}
+    \begin{itemize}[<+->]
+      \item GNU prototyping convention
+      \item Recently switched from ansi C89 to C99
+      \item Indentation
+      \item Comments (nice format)
+      \item Clean code
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Git}
+    \begin{itemize}[<+->]
+      \item Commit early, commit often
+      \item Every commit passes the testsuite (and compiles, of course!)
+      \item A bugfix comes with a test
+      \item Patch, integrated by the maintainers (Akim)
+      \item String commit formatting
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testsuite}
+    \begin{itemize}[<+->]
+      \item m4 macros
+      \item Not unit-tests
+      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
+      \item Testsuite needs to be compiled
+    \end{itemize}
+\end{frame}
 
 \end{document}
