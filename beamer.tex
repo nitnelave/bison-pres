@@ -47,7 +47,7 @@ Valentin Tolmer}
 \institute{
   Ecole Pour l'Informatique et les Techniques Avancées\\
   \texttt{ranquet@lrde.epita.fr}\\
-  \texttt{fix@me}
+  \texttt{nitnelave1@gmail.com}
 }
 
 \date{December 17, 2013}
@@ -94,12 +94,6 @@ Valentin Tolmer}
   \frametitle{Parsing and lexing}
   \begin{center}
     \includegraphics[scale=0.4]{lexer_parser}
-  \end{center}
-\end{frame}
-
-\begin{frame}
-  \begin{center}
-    \includegraphics[scale=0.3]{sillyastthing}
   \end{center}
 \end{frame}
 
@@ -160,6 +154,54 @@ Valentin Tolmer}
   the values in the syntax tree, hence as part of \textbf{semantic analysis}:
   context-sensitive syntax is in practice often more easily analyzed as
   semantics.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Types of parsers}
+There are (essentially) two ways to parse:
+\begin{itemize}
+  \item \textbf{Top-down} parsing can be viewed as an attempt to find left-most
+derivations of an input-stream by searching for parse trees using a top-down
+expansion of the given formal grammar rules. Tokens are consumed from left to
+right. \textbf{LL} (\textbf{L}eft-to-Right, \textbf{L}eftmost derivation)
+parsers are an example of such parsers.
+
+  \item \textbf{Bottom-up} (or \textit{Shift/Reduce}) parsing starts with the
+input and attempts to rewrite it to the start symbol.  Intuitively, the parser
+attempts to locate the most basic elements, then the elements containing these,
+and so on. \textbf{LR} (\textbf{L}eft-to-right, \textbf{R}ightmost derivation)
+parsers are examples of bottom-up parsers.
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{LL vs LR}
+  \begin{center}
+    \includegraphics[scale=0.47]{LLLR}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Top-down vs bottom-up}
+  \begin{center}
+    \includegraphics[scale=0.3]{topdown}
+\hfill
+    \includegraphics[scale=0.3]{bottomup}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Top-down parsing}
+  \begin{center}
+    \includegraphics[scale=0.3]{topdown2}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Bottom-up parsing}
+  \begin{center}
+    \includegraphics[scale=0.3]{sillyastthing}
+  \end{center}
 \end{frame}
 
 \end{document}
