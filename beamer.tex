@@ -709,7 +709,34 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
 \endgroup
 
 \subsection{Precedence (FIXME)}
+
 \subsection{Wcategories}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Diagnostics}
+  \begin{center}
+    \includegraphics[scale=0.1]{gcc}
+    \hfill
+    \includegraphics[scale=0.5]{bison}
+    \begin{verbatim}
+test.c: In function ‘main’:
+test.c:6:3: error: expected declaration or statement at end of input
+test.c:4:9: warning: unused variable ‘ar’ [-Wunused-variable]
+
+Warning Options
+-fsyntax-only -fmax-errors=n -pedantic -pedantic-errors -w -Wextra
+-Wall -Waddress -Waggregate-return -Warray-bounds -Wno-attributes
+-Wno-builtin-macro-redefined -Wc++-compat -Wc++11-compat -Wcast-align
+-Wcast-qual -Wchar-subscripts -Wclobbered -Wcomment -Wconversion
+-Wcoverage-mismatch -Wno-cpp -Wno-deprecated
+    \end{verbatim}
+  \end{center}
+\end{frame}
+
+\begin{frame}
+  \frametitle{}
+\end{frame}
+
 \subsection{Homemade variants}
 \subsection{GNU M4 backend}
 
