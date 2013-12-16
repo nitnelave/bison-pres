@@ -824,9 +824,238 @@ Warning Options
   \end{center}
 \end{frame}
 
-\begin{frame}
-  \frametitle{}
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Now available since 2.7}
+  \begin{verbatim}
+Operation modes:
+  -h, --help                 display this help and exit
+  -V, --version              output version information and exit
+      --print-localedir      output directory containing locale-dependent data
+      --print-datadir        output directory containing skeletons and XSLT
+  -y, --yacc                 emulate POSIX Yacc
+  -W, --warnings[=CATEGORY]  report the warnings falling in CATEGORY
+
+Warning categories include:
+  `midrule-values'    unset or unused midrule values
+  `yacc'              incompatibilities with POSIX Yacc
+  `conflicts-sr'      S/R conflicts (enabled by default)
+  `conflicts-rr'      R/R conflicts (enabled by default)
+  `deprecated'        obsolete constructs
+  `other'             all other warnings (enabled by default)
+  `all'               all the warnings
+  `no-CATEGORY'       turn off warnings in CATEGORY
+  `none'              turn off all the warnings
+  `error[=CATEGORY]'  treat warnings as errors
+  \end{verbatim}
 \end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Wdeprecated}
+  \begin{verbatim}
+$ bison -Wdeprecated
+input.yy:2.9-15: warning: deprecated directive: ‘%define variant’,
+    use ‘%define api.value.type variant’ [-Wdeprecated]
+input.yy:3.4-5: warning: empty character literal [-Wother]
+
+$ bison -Wno-deprecated
+input.yy:3.4-5: warning: empty character literal [-Wother]
+
+$ bison -Wnone
+(no output)
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{-{}-warnings}
+\begin{verbatim}
+/*-------------.
+| --warnings.  |
+`-------------*/
+
+/** The bits assigned to each warning type.  */
+typedef enum
+  {
+    warning_midrule_values, /**< Unset or unused midrule values.  */
+    warning_yacc,           /**< POSIXME.  */
+    warning_conflicts_sr,   /**< S/R conflicts.  */
+    warning_conflicts_rr,   /**< R/R conflicts.  */
+    warning_empty_rule,     /**< Implicitly empty rules.  */
+    warning_deprecated,     /**< Obsolete constructs.  */
+    warning_precedence,     /**< Useless precedence and associativity.  */
+    warning_other,          /**< All other warnings.  */
+
+    warnings_size           /**< The number of warnings.  Must be last.  */
+  } warning_bit;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+\begin{verbatim}
+typedef enum
+  {
+    /**< Issue no warnings.  */
+    Wnone             = 0,
+
+    Wmidrule_values   = 1 << warning_midrule_values,
+    Wyacc             = 1 << warning_yacc,
+    Wconflicts_sr     = 1 << warning_conflicts_sr,
+    Wconflicts_rr     = 1 << warning_conflicts_rr,
+    Wdeprecated       = 1 << warning_deprecated,
+    Wempty_rule       = 1 << warning_empty_rule,
+    Wprecedence       = 1 << warning_precedence,
+    Wother            = 1 << warning_other,
+
+    Werror            = 1 << 10, /** This bit is no longer used. */
+
+    complaint         = 1 << 11, /**< All complaints.  */
+    fatal             = 1 << 12, /**< All fatal errors.  */
+    silent            = 1 << 13, /**< Do not display the warning type.  */
+    no_caret          = 1 << 14, /**< Do not display caret location.  */
+
+    /**< All above warnings.  */
+    Weverything       = ~complaint & ~fatal & ~silent,
+    Wall              = Weverything & ~Wyacc
+  } warnings;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Displaying}
+\begin{verbatim}
+/** Display a "[-Wyacc]" like message on \a f.  */
+
+static void
+warnings_print_categories (warnings warn_flags, FILE *f)
+{
+  /* Display only the first match, the second is "-Wall".  */
+  size_t i;
+  for (i = 0; warnings_args[i]; ++i)
+    if (warn_flags & warnings_types[i])
+      {
+        severity s = warning_severity (warnings_types[i]);
+        fprintf (f, " [-W%s%s]",
+                 s == severity_error ? "error=" : "",
+                 warnings_args[i]);
+        return;
+      }
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Reading the command line}
+\begin{verbatim}
+for (args = strtok (args, ","); args; args = strtok (NULL, ","))
+  {
+    size_t no = STRPREFIX_LIT ("no-", args) ? 3 : 0;
+    size_t err = STRPREFIX_LIT ("error", args + no) ? 5 : 0;
+
+    flag_argmatch (option, keys,
+                   values, all, err ? &errors_flag : flags,
+                   args, no, err);
+  }
+if (value)
+  {
+    if (no)
+      *flags &= ~value;
+    else
+      {
+        if (err)
+          warnings_flag |= value;
+        *flags |= value;
+      }
+  }
+else
+  {
+    if (no ? !err : err)
+      *flags |= all;
+    else
+      *flags &= ~all;
+  }
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Oh, by the way, the testsuite?}
+\begin{verbatim}
+input.yy:3.4-5: warning: empty character literal [-Wother]
+\end{verbatim}
+
+Must become:
+
+\begin{verbatim}
+input.yy:3.4-5: error: empty character literal [-Werror=other]
+\end{verbatim}
+
+\pause
+
+\begin{verbatim}
+
+
+
+
+
+
+$PERL -pi -e 's{(.*): warning: (.*)\[-W(.*)\]$}
+              $1:error $2[-Werror=$3]}'             expout
+\end{verbatim}
+
+Seems easy enough?  \pause Enters GNU M4.
+
+\begin{verbatim}
+$PERL -pi -e 's{(.*): warning: (.*)\[-W(.*)\]$}
+              $1:error $][2\@<:@-Werror=$][3@:>@}'  expout
+
+
+\end{verbatim}
+
+Yeah, because fuck you.
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{So, how are the warnings generated and handled?}
+\begin{verbatim}
+#define DEPRECATED(Msg)                                         \
+  do {                                                          \
+    size_t i;                                                   \
+    deprecated_directive (loc, yytext, Msg);                    \
+    scanner_cursor.column -= mbsnwidth (Msg, strlen (Msg), 0);  \
+    for (i = strlen (Msg); i != 0; --i)                         \
+      unput (Msg[i - 1]);                                       \
+  } while (0)
+
+<INITIAL>
+{
+  "%binary"                 return PERCENT_NONASSOC;
+  "%code"                   return PERCENT_CODE;
+  "%debug"                  RETURN_PERCENT_FLAG("parse.trace");
+
+  /* deprecated */
+  "%default"[-_]"prec"      DEPRECATED("%default-prec");
+  "%error"[-_]"verbose"     DEPRECATED("%define parse.error verbose");
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{So, how are the warnings generated and handled?}
+\begin{verbatim}
+void
+deprecated_directive (location const *loc,
+                      char const *old,
+                      char const *upd)
+{
+  if (feature_flag & feature_caret)
+    complain (loc, Wdeprecated,
+              _("deprecated directive, use %s"),
+              quote_n (1, upd));
+  else
+    complain (loc, Wdeprecated,
+              _("deprecated directive: %s, use %s"),
+              quote (old), quote_n (1, upd));
+}
+\end{verbatim}
+\end{frame}
+
 
 \subsection{Homemade variants}
 \subsection{GNU M4 backend}
