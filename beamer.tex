@@ -284,7 +284,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Dangling else problem}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item if a then if b then c else d
       \item To whom does the else belong?
       \item Shift/reduce conflict
@@ -306,7 +306,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Dangling else problem}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Precedence solution
       \item \texttt{\%precedence "then"}
       \item \texttt{\%precedence "else"}
@@ -315,7 +315,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Dangling else problem}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Associativity solution
       \item \texttt{\%right "then" "else"}
     \end{itemize}
@@ -323,7 +323,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Dangling else problem}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Changing the language
       \item if a then if b then c fi else d fi
       \item Often not acceptable
@@ -334,7 +334,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Getting started}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Prologue
       \item Grammar
       \item Epilogue
@@ -343,19 +343,19 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Prologue}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Declarations
-      \begin{itemize}[<+->]
+      \begin{itemize}
         \item \texttt{\%defines}
         \item \texttt{\%expect 0}
         \item \texttt{\%skeleton "lalr1.cc"}
       \end{itemize}
       \item Includes
-      \begin{itemize}[<+->]
+      \begin{itemize}
         \item C code at the top of the parser
       \end{itemize}
       \item Token list
-      \begin{itemize}[<+->]
+      \begin{itemize}
         \item Token list
         \item \texttt{\#define}
         \item Prototypes (yylex)
@@ -365,7 +365,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Grammar}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Rules
       \item Actions
     \end{itemize}
@@ -373,7 +373,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Grammar Rules}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Similar to BNF
       \item No compact way to describe optional elements/lists
       \item Beware of the \%empty!
@@ -382,7 +382,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Grammar Actions}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item C/C++ code run when the rule is recognized
       \item Create an AST, compute the result of an expression\ldots
       \item Usually at the end
@@ -393,7 +393,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Epilogue}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Raw C/C++ code included at the end of the parser
       \item main() to make it a stand-alone parser
     \end{itemize}
@@ -410,7 +410,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Contributing}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Open source
       \item Peer review (quality standards)
       \item Testsuite
@@ -420,7 +420,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Coding style}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item GNU prototyping convention
       \item Recently switched from ansi C89 to C99
       \item Indentation
@@ -431,7 +431,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Git}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item Commit early, commit often
       \item Every commit passes the testsuite (and compiles, of course!)
       \item A bugfix comes with a test
@@ -442,7 +442,7 @@ Grammar is as follows:
 
 \begin{frame}
   \frametitle{Testsuite}
-    \begin{itemize}[<+->]
+    \begin{itemize}
       \item m4 macros
       \item Not unit-tests
       \item TESTSUITEFLAGS (specific tests, threading, \ldots)
