@@ -301,8 +301,144 @@ Another, unrelated example:
 \subsection{Formal grammars}
 
 \begin{frame}
+  \frametitle{Syntax}
+  The \textbf{syntax} of a computer language is the set of rules that defines
+  the combinations of symbols that are considered to be a correctly structured
+  document or fragment in that language.
+
+  \vfill
+
+  Syntax – the form – is contrasted with semantics – the meaning.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Metasyntax}
+  A \textbf{metasyntax} describes the allowable structure and composition of
+  phrases and sentences of a metalanguage, which is used to describe either a
+  natural language or a computer programming language.
+
+  \vfill
+  Some of the widely used formal metalanguages for computer languages are
+  \textit{Backus–Naur Form} (BNF),
+  \textit{Extended Backus–Naur Form} (EBNF), \textit{Wirth syntax notation}
+  (WSN), and \textit{Augmented Backus–Naur Form} (ABNF).
+\end{frame}
+
+\begin{frame}
+  \frametitle{Elements of metasyntax}
+  \begin{itemize}
+    \item \textbf{Terminals}: a stand-alone syntactic structure. They could be
+      denoted by double quoting the name of the terminals.
+
+      E.g. \texttt{“else” , “if”, “then”, “while”}
+
+      \vfill
+
+    \item \textbf{Nonterminals}: a symbolic representation defining a set of
+      allowable syntactic structures that is composed of a subset of elements.
+      Nonterminals could be denoted by angle bracketing the name of the
+      nonterminals.
+
+      E.g. \texttt{<int>, <char>, <boolean>}
+
+      \vfill
+
+    \item \textbf{Metasymbol}: a symbolic representation denoting syntactic
+      information.
+
+      E.g. \texttt{:= , |, \{\}, (), [], *}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,shrink=18]
+  \frametitle{Backus-Naur Form}
+\begin{verbatim}
+ <syntax>         ::= <rule> | <rule> <syntax>
+
+ <rule>           ::= <opt-whitespace> "<" <rule-name> ">"
+                        <opt-whitespace> "::="
+                        <opt-whitespace> <expression> <line-end>
+
+ <opt-whitespace> ::= " " <opt-whitespace> | ""
+
+ <expression>     ::= <list> | <list> "|" <expression>
+
+ <line-end>       ::= <opt-whitespace> <EOL> | <line-end>
+                          <line-end>
+
+ <list>           ::= <term> | <term> <opt-whitespace> <list>
+
+ <term>           ::= <literal> | "<" <rule-name> ">"
+
+ <literal>        ::= '"' <text> '"' | "'" <text> "'"
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Wirth syntax notation}
+  \begin{verbatim}
+  SYNTAX     = { PRODUCTION } .
+  PRODUCTION = IDENTIFIER "=" EXPRESSION "." .
+  EXPRESSION = TERM { "|" TERM } .
+  TERM       = FACTOR { FACTOR } .
+  FACTOR     = IDENTIFIER
+           | LITERAL
+           | "[" EXPRESSION "]"
+           | "(" EXPRESSION ")"
+           | "{" EXPRESSION "}" .
+           IDENTIFIER = letter { letter } .
+           LITERAL    = """" character { character } """" .
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Extended Backus-Naur Form}
+  Derived from regular expressions:
+  \begin{itemize}
+    \item trailing%vim...
+      \texttt{?} means an optional item;
+    \item trailing \texttt{+} and \texttt{*} means repeat 1 or more times, or 0
+      or more times, respectively.
+  \end{itemize}
+  \begin{verbatim}
+  number = digit+ .
+  identifier = letter (letter | digit)* .
+  functioncall = functionname "(" parameterlist? ")" .
+  \end{verbatim}
+
+  \vfill
+
+  Based on Wirth's definition:
+  \begin{itemize}
+    \item \texttt{[ ]} means an optional item;
+    \item \texttt{\{ \}} means repeat 0 or more times.
+  \end{itemize}
+  \begin{verbatim}
+  number = digit {digit} .
+  identifier = letter {letter | digit} .
+  functioncall = functionname "(" [parameterlist] ")" .
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Augmented Backus-Naur Form}
+  \begin{itemize}
+    \item \texttt{[ ]} means an optional item;
+    \item leading \texttt{*} means repetition, with optional extra numbers to
+      indicate bounds (e.g. \texttt{*} means 0 or more, \texttt{1*} means 1 or
+      more, \texttt{2*5} means between two and five times).
+  \end{itemize}
+  \vfill
+  \begin{verbatim}
+  number = 1*digit .
+  identifier = letter *(letter | digit) .
+  functioncall = functionname "(" [parameterlist] ")" .
+  \end{verbatim}
+\end{frame}
+
+\begin{frame}
   \frametitle{Dangling else problem}
-    \begin{itemize}
+  \begin{itemize}
       \item \texttt{if a then if b then c else d}
       \item To whom does the else belong?
       \item \texttt{if a then (if b then c else d)}
