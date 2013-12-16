@@ -431,6 +431,14 @@ Another, unrelated example:
 
 \section{Working with GNU}
 
+\subsection{The GNU world}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[scale=0.3]{gnu}
+  \end{center}
+\end{frame}
+
 \begin{frame}
   \frametitle{Contributing}
     \begin{itemize}
@@ -441,6 +449,8 @@ Another, unrelated example:
     \end{itemize}
 \end{frame}
 
+\subsection{The GNU's habitat}
+
 \begin{frame}
   \frametitle{Coding style}
     \begin{itemize}
@@ -450,6 +460,53 @@ Another, unrelated example:
       \item Comments (nice format)
       \item Clean code
     \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{The GNU gnulib}
+  Suppose you have reusable code:
+  \begin{itemize}
+    \item likely useful outside your project;
+    \item not dependent on your project.
+  \end{itemize}
+  \vfill
+  You can contribute it to the \textbf{gnulib}: a modular source code library,
+  composed of:
+    \begin{itemize}
+      \item \textbf{POSIX} and \textbf{glibc} compatible substitutes;
+      \item general purpose code for applications (file system traversal,
+        crypto, containers, i18n, etc.);
+      \item maintainer infrastructure (\texttt{config.guess}, consistency
+        checking tools, upload scripts for \texttt{ftp.gnu.org}, \ldots)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{gnulib/xmalloc.c}}
+\begin{verbatim}
+void *
+xmalloc (size_t n)
+{
+  void *p = malloc (n);
+  if (!p && n != 0)
+    xalloc_die ();
+  return p;
+}
+
+void *
+xcalloc (size_t n, size_t s)
+{
+  void *p;
+  /* Test for overflow, since some calloc implementations don't have
+     proper overflow checks.  But omit overflow and size-zero tests if
+     HAVE_GNU_CALLOC, since GNU calloc catches overflow and never
+     returns NULL if successful.  */
+  if ((! HAVE_GNU_CALLOC && xalloc_oversized (n, s))
+      || (! (p = calloc (n, s)) && (HAVE_GNU_CALLOC || n != 0)))
+    xalloc_die ();
+  return p;
+}
+\end{verbatim}
 \end{frame}
 
 \begin{frame}
