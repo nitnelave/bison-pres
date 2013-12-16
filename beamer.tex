@@ -508,41 +508,6 @@ Another, unrelated example:
 \end{frame}
 \endgroup
 
-\subsection{Prologue (rm?)}
-
-\begin{frame}
-  \frametitle{Getting started}
-    \begin{itemize}
-      \item Prologue
-      \item Grammar
-      \item Epilogue
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Prologue}
-    \begin{itemize}
-      \item Declarations
-      \begin{itemize}
-        \item \texttt{\%defines}
-        \item \texttt{\%expect 0}
-        \item \texttt{\%skeleton "lalr1.cc"}
-      \end{itemize}
-      \item Includes
-      \begin{itemize}
-        \item C code at the top of the parser
-      \end{itemize}
-      \item Token list
-      \begin{itemize}
-        \item Token list
-        \item \texttt{\#define}
-        \item Prototypes (yylex, locations)
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\subsection{Grammar}
-
 \begin{frame}
   \frametitle{Grammar}
     \begin{itemize}
@@ -683,16 +648,6 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
       \item Create an AST, compute the result of an expression\ldots
       \item Usually at the end
       \item Can be mid-rule actions (lexer context change, \ldots)
-    \end{itemize}
-\end{frame}
-
-\subsection{Epilogue (rm?)}
-
-\begin{frame}
-  \frametitle{Epilogue}
-    \begin{itemize}
-      \item Raw C/C++ code included at the end of the parser
-      \item main() to make it a stand-alone parser
     \end{itemize}
 \end{frame}
 
