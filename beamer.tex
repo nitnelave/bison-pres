@@ -509,6 +509,65 @@ xcalloc (size_t n, size_t s)
 \end{verbatim}
 \end{frame}
 
+\begin{frame}[fragile]
+  \frametitle{GNU gettext}
+  Wrap strings that the user will see in the \texttt{gettext} function. To reduce code
+clutter, it is commonly aliased to \texttt{\_}.
+
+\begin{verbatim}
+/// TRANSLATORS: Please leave %s as it is, because it
+/// is needed by the program.
+printf(_("My name is %s.\n"), my_name);
+\end{verbatim}
+
+Then, \texttt{xgettext} is run using the command:
+
+\texttt{xgettext --add-comments=/}
+
+\vfill
+
+The resultant \texttt{.pot} file looks like this with the comment:
+\begin{verbatim}
+ #. TRANSLATORS: Please leave %s as it is, because it
+ # is needed by the program.
+ #: src/name.c:36
+ msgid "My name is %s.\n"
+ msgstr ""
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{GNU gettext}
+The translator derives a \texttt{.po} (Portable Object) file from the template
+using the \texttt{msginit} program, then fills out the translations
+
+\begin{verbatim}
+msginit --locale=fr --input=name.pot
+\end{verbatim}
+
+This will create \texttt{fr.po}.
+
+\begin{verbatim}
+ #: src/name.c:36
+ msgid "My name is %s.\n"
+ msgstr "Je m'appelle %s.\n"
+\end{verbatim}
+Finally, the \texttt{.po} files are compiled into binary \texttt{.mo} files
+with \texttt{msgfmt}.  These are now ready for distribution with the software
+package.
+
+The user sets the environment variable \texttt{LC\_MESSAGES}, and the program
+will display strings in the selected language.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{GNU gettext}
+  \begin{center}
+    \includegraphics[scale=0.3]{Gettext}
+  \end{center}
+\end{frame}
+
+
 \begin{frame}
   \frametitle{Git}
     \begin{itemize}
