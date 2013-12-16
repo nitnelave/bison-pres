@@ -648,6 +648,8 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
       \item Create an AST, compute the result of an expression\ldots
       \item Usually at the end
       \item Can be mid-rule actions (lexer context change, \ldots)
+      \item Can have values
+      \item Warning: considered as elements in the \$n notation.
     \end{itemize}
 \end{frame}
 
@@ -1105,8 +1107,19 @@ __extension__                                                           \
     \begin{itemize}
       \item m4 macros
       \item Not unit-tests
-      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
       \item Testsuite needs to be compiled
+      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testsuite}
+    \begin{itemize}
+      \item Use threads: \texttt{TESTSUITEFLAGS='-j8'}
+      \item Run only one category: \texttt{TESTSUITEFLAGS='-k c++'}
+      \item Only test number 42: \texttt{TESTSUITEFLAGS='42'}
+      \item More advanced uses, like passing configure options to scripts
+        called by the testsuite
     \end{itemize}
 \end{frame}
 
