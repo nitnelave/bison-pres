@@ -10,15 +10,16 @@ What is a parser?
 ----------------
 
 * LALR, conflicts, automatons
-* Some tricks for formal grammars: implementing free monoids, free semigroups,
+* ~~Some tricks for formal grammars: implementing free monoids, free
+  semigroups,~~
 * the dangling-else problem
 
-Getting started with GNU Bison
+~~Getting started with GNU Bison~~
 ------------------------------
 
-* Minimal start
-* RTFM, we wrote it!
-* C++ specifics (variants, etc.)
+* ~~Minimal start~~
+* ~~RTFM, we wrote it!~~
+* ~~C++ specifics (variants, etc.)~~
 
 GNU Bison Internals
 -------------------
