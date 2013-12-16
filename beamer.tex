@@ -508,41 +508,6 @@ Another, unrelated example:
 \end{frame}
 \endgroup
 
-\subsection{Prologue (rm?)}
-
-\begin{frame}
-  \frametitle{Getting started}
-    \begin{itemize}
-      \item Prologue
-      \item Grammar
-      \item Epilogue
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Prologue}
-    \begin{itemize}
-      \item Declarations
-      \begin{itemize}
-        \item \texttt{\%defines}
-        \item \texttt{\%expect 0}
-        \item \texttt{\%skeleton "lalr1.cc"}
-      \end{itemize}
-      \item Includes
-      \begin{itemize}
-        \item C code at the top of the parser
-      \end{itemize}
-      \item Token list
-      \begin{itemize}
-        \item Token list
-        \item \texttt{\#define}
-        \item Prototypes (yylex, locations)
-      \end{itemize}
-  \end{itemize}
-\end{frame}
-
-\subsection{Grammar}
-
 \begin{frame}
   \frametitle{Grammar}
     \begin{itemize}
@@ -683,16 +648,8 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
       \item Create an AST, compute the result of an expression\ldots
       \item Usually at the end
       \item Can be mid-rule actions (lexer context change, \ldots)
-    \end{itemize}
-\end{frame}
-
-\subsection{Epilogue (rm?)}
-
-\begin{frame}
-  \frametitle{Epilogue}
-    \begin{itemize}
-      \item Raw C/C++ code included at the end of the parser
-      \item main() to make it a stand-alone parser
+      \item Can have values
+      \item Warning: considered as elements in the \$n notation.
     \end{itemize}
 \end{frame}
 
@@ -708,7 +665,141 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
 \end{frame}
 \endgroup
 
-\subsection{Precedence (FIXME)}
+\subsection{Operator Precedence}
+\begin{frame}
+  \frametitle{A simple model}
+    \begin{itemize}
+      \item Simple way to represent operator precedence: an int
+      \item Increasing order, as precedence increases.
+      \item Pro: Simple to understand and to implement
+      \item Con: Not very powerful/versatile, can hide errors
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Conflict resolution}
+\begin{verbatim}
+prec(a) > prec(b)?
+  -> yes: shift
+  -> no: prec(a) < prec(b)?
+    -> yes: reduce
+    -> no: assoc(a) == ?
+      -> %left: reduce
+      -> %right: shift
+      -> %noassoc: error
+      -> nothing/%precedence: conflict
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Moving towards a partial order}
+    Objectives:
+    \begin{itemize}
+      \item To be able to express a partial order on operators
+      \item Simple syntax, easily understandable
+      \item Clarify grammars, highlight hidden declarations
+      \item Retro-compatible
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Proposed solution}
+    \begin{itemize}
+      \item Group operators by semantics (\texttt{\%gprec \{\}})
+      \item Total order inside a group
+      \item No comparison possible between groups, by default
+      \item Extra instruction to add details (\texttt{\%precr \{\}})
+      \item Precedence visualisation tool
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Diagnosis tool}
+    \begin{itemize}
+      \item Output: \textbf{DOT}
+      \item Visualize the precedence relationships
+      \item Used, declared, useless\ldots
+      \item helps with group identification
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+  \footnotesize{%
+  \begin{verbatim}
+// From lowest to highest
+%right ASSIGNOP ASSIGN SLASH_BEFORE_EQUAL
+%right '?' ':'
+%left LEX_OR
+%left LEX_AND
+%left LEX_GETLINE
+%nonassoc LEX_IN
+%left FUNC_CALL LEX_BUILTIN LEX_LENGTH
+%nonassoc ','
+%left MATCHOP
+%nonassoc RELOP '<' '>' IO_IN IO_OUT
+%left CONCAT_OP
+%left YSTRING YNUMBER
+%left '+' '-'
+%left '*' '/' '%'
+%right '!' UNARY
+%right '^'
+%left INCREMENT DECREMENT
+%left '$'
+%left '(' ')'
+\end{verbatim}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {
+  %precedence ASSIGNOP
+  %right '?' ':'
+  %left LEX_OR
+  %left LEX_AND
+
+  %precedence LEX_IN
+
+  %left MATCHOP
+  %nonassoc RELOP '<' '>'
+}
+
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {...}
+%gprec arith {
+  %precedence CONCAT_OP
+  %left '+' '-'
+  %left '*' '/' '%'
+  %precedence UNARY
+  %right '^'
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {...}
+%gprec arith {...}
+
+%gprec {
+  %precedence LEX_LENGTH
+  %precedence '('
+}
+
+%precr arith > '<'
+\end{verbatim}
+\end{frame}
 
 \subsection{Wcategories}
 
@@ -877,7 +968,7 @@ managed}. It implements a region-based memory management scheme.
 \vfill
 
 Consider reading
-\texttt{lrde.epita.fr/~akim/ccmp/doc/gnuprog2/obstack.html}, and
+\texttt{lrde.epita.fr/$_{\widetilde{~}}$akim/ccmp/doc/gnuprog2/obstack.html}, and
 the rest of it too.
 \end{frame}
 
@@ -1041,8 +1132,19 @@ __extension__                                                           \
     \begin{itemize}
       \item m4 macros
       \item Not unit-tests
-      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
       \item Testsuite needs to be compiled
+      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Testsuite}
+    \begin{itemize}
+      \item Use threads: \texttt{TESTSUITEFLAGS='-j8'}
+      \item Run only one category: \texttt{TESTSUITEFLAGS='-k c++'}
+      \item Only test number 42: \texttt{TESTSUITEFLAGS='42'}
+      \item More advanced uses, like passing configure options to scripts
+        called by the testsuite
     \end{itemize}
 \end{frame}
 
