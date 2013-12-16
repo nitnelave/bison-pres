@@ -708,7 +708,143 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
 \end{frame}
 \endgroup
 
-\subsection{Precedence (FIXME)}
+\subsection{Operator Precedence}
+\begin{frame}
+  \frametitle{A simple model}
+    \begin{itemize}
+      \item Simple way to represent operator precedence: an int
+      \item Increasing order, as precedence increases.
+      \item Pro: Simple to understand and to implement
+      \item Con: Not very powerful/versatile, can hide errors
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Conflict resolution}
+\begin{verbatim}
+prec(a) > prec(b)?
+  -> yes: shift
+  -> no: prec(a) < prec(b)?
+    -> yes: reduce
+    -> no: assoc(a) == ?
+      -> %left: reduce
+      -> %right: shift
+      -> %noassoc: error
+      -> nothing/%precedence: conflict
+\end{verbatim}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Moving towards a partial order}
+    Objectives:
+    \begin{itemize}
+      \item To be able to express a partial order on operators
+      \item Simple syntax, easily understandable
+      \item Clarify grammars, highlight hidden declarations
+      \item Retro-compatible
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Proposed solution}
+    \begin{itemize}
+      \item Group operators by semantics (\texttt{\%gprec \{\}})
+      \item Total order inside a group
+      \item No comparison possible between groups, by default
+      \item Extra instruction to add details (\texttt{\%precr \{\}})
+      \item Precedence visualisation tool
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Diagnosis tool}
+    \begin{itemize}
+      \item Output: \textbf{DOT}
+      \item Visualize the precedence relationships
+      \item Used, declared, useless...
+      \item helps with group identification
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+  \footnotesize{
+  \begin{verbatim}
+// From lowest to highest
+%right ASSIGNOP ASSIGN SLASH_BEFORE_EQUAL
+%right '?' ':'
+%left LEX_OR
+%left LEX_AND
+%left LEX_GETLINE
+%nonassoc LEX_IN
+%left FUNC_CALL LEX_BUILTIN LEX_LENGTH
+%nonassoc ','
+%left MATCHOP
+%nonassoc RELOP '<' '>' IO_IN IO_OUT
+%left CONCAT_OP
+%left YSTRING YNUMBER
+%left '+' '-'
+%left '*' '/' '%'
+%right '!' UNARY
+%right '^'
+%left INCREMENT DECREMENT
+%left '$'
+%left '(' ')'
+\end{verbatim}
+}
+\end{frame}
+
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {
+  %precedence ASSIGNOP
+  %right '?' ':'
+  %left LEX_OR
+  %left LEX_AND
+
+  %precedence LEX_IN
+
+  %left MATCHOP
+  %nonassoc RELOP '<' '>'
+}
+
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {...}
+%gprec arith {
+  %precedence CONCAT_OP
+  %left '+' '-'
+  %left '*' '/' '%'
+  %precedence UNARY
+  %right '^'
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Example: Gawk}
+\begin{verbatim}
+%gprec comp_op {...}
+%gprec arith {...}
+
+%gprec {
+  %precedence LEX_LENGTH
+  %precedence '('
+}
+
+%precr arith > '<'
+\end{verbatim}
+\end{frame}
+
+>>>>>>> beamer: operator precedence
 \subsection{Wcategories}
 \subsection{Homemade variants}
 \subsection{GNU M4 backend}
