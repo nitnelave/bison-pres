@@ -567,6 +567,140 @@ will display strings in the selected language.
   \end{center}
 \end{frame}
 
+\begin{frame}
+  \frametitle{obstacks}
+It is a memory-management GNU extension. An \textit{obstack} is a
+\textbf{stack} of \textit{objects} (data items) which is \textbf{dynamically
+managed}. It implements a region-based memory management scheme.
+
+\vfill
+
+Consider reading
+\texttt{lrde.epita.fr/~akim/ccmp/doc/gnuprog2/obstack.html}, and
+the rest of it too.
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{obstacks}
+
+Before you can call any of the obstack functions, you need to decide how those
+functions will allocate and release dynamic memory, and must define the
+following macros in your source file:
+
+\begin{verbatim}
+     #define obstack_chunk_alloc  malloc
+     #define obstack_chunk_free   free
+\end{verbatim}
+
+\vfill
+
+Each function has both a macro definition and a function definition:
+
+\begin{verbatim}
+/* Use the macro. */
+x = (char *) obstack_alloc(obptr, size);
+
+/* Call the function. */
+x = (char *) (obstack_alloc) (obptr, size);
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/src/scan-gram.l}}
+\begin{verbatim}
+  /*----------------------------.
+  | Decode escaped characters.  |
+  `----------------------------*/
+
+<SC_ESCAPED_STRING,SC_ESCAPED_CHARACTER>
+{
+  \\[0-7]{1,3} {
+    unsigned long int c = strtoul (yytext + 1, NULL, 8);
+    if (!c || UCHAR_MAX < c)
+      complain (loc, complaint, _("invalid number after \\-escape: %s"),
+                   yytext+1);
+    else
+      obstack_1grow (&obstack_for_string, c);
+  }
+
+  \\x[0-9abcdefABCDEF]+ {
+    verify (UCHAR_MAX < ULONG_MAX);
+    unsigned long int c = strtoul (yytext + 2, NULL, 16);
+    if (!c || UCHAR_MAX < c)
+      complain (loc, complaint, _("invalid number after \\-escape: %s"),
+                   yytext+1);
+    else
+      obstack_1grow (&obstack_for_string, c);
+  }
+
+  \\a   obstack_1grow (&obstack_for_string, '\a');
+  \\b   obstack_1grow (&obstack_for_string, '\b');
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/src/graphviz.c}}
+\begin{verbatim}
+fprintf (fout, "  %1$d -> \"%1$dR%2$d%3$s\" [",
+         source, ruleno, ed);
+
+/* (The lookahead tokens have been added to the beginning of the
+   obstack, in the caller function.) */
+if (! obstack_empty_p (out))
+  {
+    char *label = obstack_finish0 (out);
+    fprintf (fout, "label=\"[%s]\", ", label);
+    obstack_free (out, label);
+  }
+\end{verbatim}
+\ldots
+\begin{verbatim}
+static bool
+print_token (struct obstack *out, bool first, char const *tok)
+{
+  char const *q = escape (tok);
+
+  if (! first)
+    obstack_sgrow (out, ", ");
+  obstack_sgrow (out, q);
+  return false;
+}
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{gnulib/lib/obstack.h}}
+\begin{verbatim}
+/* Similar to _BPTR_ALIGN (B, P, A), except optimize the common case
+   where pointers can be converted to integers, aligned as integers,
+   and converted back again.  If PTR_INT_TYPE is narrower than a
+   pointer (e.g., the AS/400), play it safe and compute the alignment
+   relative to B.  Otherwise, use the faster strategy of computing the
+   alignment relative to 0.  */
+
+#define __PTR_ALIGN(B, P, A)                                                \
+  __BPTR_ALIGN (sizeof (PTR_INT_TYPE) < sizeof (void *) ? (B) : (char *) 0, \
+                P, A)
+
+...
+#define obstack_alignment_mask(h) ((h)->alignment_mask)
+
+/* To prevent prototype warnings provide complete argument list.  */
+#define obstack_init(h)                                         \
+  _obstack_begin ((h), 0, 0,                                    \
+                  (void *(*) (long)) obstack_chunk_alloc,       \
+                  (void (*) (void *)) obstack_chunk_free)
+...
+# define obstack_1grow(OBSTACK,datum)                                   \
+__extension__                                                           \
+({ struct obstack *__o = (OBSTACK);                                     \
+   if (__o->next_free + 1 > __o->chunk_limit)                           \
+     _obstack_newchunk (__o, 1);                                        \
+   obstack_1grow_fast (__o, datum);                                     \
+   (void) 0; })
+\end{verbatim}
+\end{frame}
+
 
 \begin{frame}
   \frametitle{Git}
