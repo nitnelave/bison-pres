@@ -404,6 +404,122 @@ Another, unrelated example:
     \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/src/parse-gram.y}}
+\begin{verbatim}
+| "%verbose"                    { report_flag |= report_states; }
+| "%yacc"                       { yacc_flag = true; }
+| /*FIXME: Err?  What is this horror doing here? */ ";"
+;
+
+prologue_declarations:
+  %empty
+| prologue_declarations prologue_declaration
+;
+
+rhses.1:
+  rhs                { grammar_current_rule_end (@1); }
+| rhses.1 "|" rhs    { grammar_current_rule_end (@3); }
+| rhses.1 ";"
+;
+
+tag.opt:
+  %empty { current_type = NULL; }
+| TAG    { current_type = $1; tag_seen = true; }
+;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/tests/named-refs.at}}
+\begin{verbatim}
+exp:
+  NUM                { $$ = $NUM; }
+| exp[l] '=' exp[r]
+  {
+    if ($l != $r)
+      fprintf (stderr, "calc: error: %d != %d\n", $l, $r);
+   $$ = $l;
+  }
+| exp[x] '+' { $<ival>$ = $x; } [l] exp[r]  { $$ = $<ival>l + $r;    }
+| exp[l] '-' exp[r]  { $$ = $l - $r;        }
+| exp[l] '*' exp[r]  { $$ = $l * $r;        }
+| exp[l] '/' exp[r]  { $$ = $l / $r;        }
+| '-' exp  %prec NEG { $$ = -$2;            }
+| exp[l] '^' exp[r]  { $$ = power ($l, $r); }
+| '(' exp[e] ')'     { $$ = $e;           }
+| '(' error ')'      { $$ = 1111; yyerrok;  }
+| '!'                { $$ = 0; YYERROR;     }
+| '-' error          { $$ = 0; YYERROR;     }
+;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{lilypond-2.16.2/lily/parser.yy}}
+\begin{verbatim}
+dots:
+  /* empty */   { $$ = 0; }
+  | dots '.' { $$ ++; }
+  ;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/tests/actions.at}}
+\begin{verbatim}
+exp: a_1 a_2 { $<val>$ = 3; } { $<val>$ = $<val>3 + 1; } a_5
+     sum_of_the_five_previous_values {
+       USE (($1, $2, $<foo>3, $<foo>4, $5));
+       printf ("%d\n", $6);
+    }
+;
+a_1: { $$ = 1; };
+a_2: { $$ = 2; };
+a_5: { $$ = 5; };
+
+sum_of_the_five_previous_values:
+    {
+       $$ = $<val>0 + $<val>-1 + $<val>-2 + $<val>-3 + $<val>-4;
+    }
+;
+
+start: one two { $$.val = $1.val + $2.val; } sum ;
+one: { $$.val = 1; } ;
+two: { $$.val = 2; } ;
+sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{postgresql-9.3.2/src/backend/parser/gram.y}}
+\begin{verbatim}
+      | CREATE CONSTRAINT TRIGGER name AFTER TriggerEvents ON
+      qualified_name OptConstrFromTable ConstraintAttributeSpec
+      FOR EACH ROW TriggerWhen
+      EXECUTE PROCEDURE func_name '(' TriggerFuncArgs ')'
+        {
+          CreateTrigStmt *n = makeNode(CreateTrigStmt);
+          n->trigname = $4;
+          n->relation = $8;
+          n->funcname = $17;
+          n->args = $19;
+          n->row = TRUE;
+          n->timing = TRIGGER_TYPE_AFTER;
+          n->events = intVal(linitial($6));
+          n->columns = (List *) lsecond($6);
+          n->whenClause = $14;
+          n->isconstraint  = TRUE;
+          processCASbits($10, @10, "TRIGGER",
+                   &n->deferrable, &n->initdeferred, NULL,
+                   NULL, yyscanner);
+          n->constrrel = $9;
+          $$ = (Node *)n;
+        }
+\end{verbatim}
+\end{frame}
+
+
 \begin{frame}
   \frametitle{Grammar Actions}
     \begin{itemize}
