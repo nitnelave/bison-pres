@@ -285,8 +285,10 @@ Grammar is as follows:
 \begin{frame}
   \frametitle{Dangling else problem}
     \begin{itemize}
-      \item if a then if b then c else d
+      \item \texttt{if a then if b then c else d}
       \item To whom does the else belong?
+      \item \texttt{if a then (if b then c else d)}
+      \item \texttt{if a then (if b then c) else d}
       \item Shift/reduce conflict
     \end{itemize}
 \end{frame}
@@ -325,7 +327,7 @@ Grammar is as follows:
   \frametitle{Dangling else problem}
     \begin{itemize}
       \item Changing the language
-      \item if a then if b then c fi else d fi
+      \item \texttt{if a then if b then c fi else d fi}
       \item Often not acceptable
     \end{itemize}
 \end{frame}
@@ -358,7 +360,7 @@ Grammar is as follows:
       \begin{itemize}
         \item Token list
         \item \texttt{\#define}
-        \item Prototypes (yylex)
+        \item Prototypes (yylex, locations)
       \end{itemize}
   \end{itemize}
 \end{frame}
@@ -376,7 +378,7 @@ Grammar is as follows:
     \begin{itemize}
       \item Similar to BNF
       \item No compact way to describe optional elements/lists
-      \item Beware of the \%empty!
+      \item Beware of the \texttt{\%empty}!
     \end{itemize}
 \end{frame}
 
