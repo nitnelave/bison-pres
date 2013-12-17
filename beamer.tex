@@ -1724,6 +1724,33 @@ __extension__                                                           \
     \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile,shrink=25]
+  \frametitle{\texttt{bison/src/gram.c}}
+\begin{verbatim}
+void
+grammar_rules_print_xml (FILE *out, int level)
+{
+  rule_number r;
+  bool first = true;
+
+  for (r = 0; r < nrules + nuseless_productions; r++)
+    {
+      if (first)
+        xml_puts (out, level + 1, "<rules>");
+      first = false;
+      {
+        char const *usefulness;
+        if (rule_useless_in_grammar_p (&rules[r]))
+          usefulness = "useless-in-grammar";
+        else if (rule_useless_in_parser_p (&rules[r]))
+          usefulness = "useless-in-parser";
+        else
+          usefulness = "useful";
+        xml_indent (out, level + 2);
+        fprintf (out, "<rule number=\"%d\" usefulness=\"%s\"",
+\end{verbatim}
+\end{frame}
+
 \begin{frame}
   \frametitle{Git}
     \begin{itemize}
@@ -1741,7 +1768,7 @@ __extension__                                                           \
       \item m4 macros
       \item Not unit-tests
       \item Testsuite needs to be compiled
-      \item TESTSUITEFLAGS (specific tests, threading, \ldots)
+      \item \texttt{TESTSUITEFLAGS} (specific tests, threading, \ldots)
     \end{itemize}
 \end{frame}
 
@@ -1756,4 +1783,47 @@ __extension__                                                           \
     \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile,shrink=25]
+  \frametitle{Testsuite and m4, a love story}
+\begin{verbatim}
+AT_SETUP([[Unused %define api.pure]])
+
+# AT_CHECK_API_PURE(DECLS, VALUE)
+# -------------------------------
+# Make sure Bison reports that '%define api.pure VALUE' is unused when DECLS
+# are specified.
+m4_define([AT_CHECK_API_PURE],
+[
+AT_DATA([[input.y]],
+[[%define api.pure ]$2[
+]$1[
+%%
+start: %empty;
+]])
+
+AT_BISON_CHECK([[input.y]], [[1]], [],
+[[input.y:1.9-16: error: %define variable 'api.pure' is not used
+]])
+])
+
+AT_CHECK_API_PURE([[%language "c++"]], [[]])
+AT_CHECK_API_PURE([[%language "c++"]], [[false]])
+AT_CHECK_API_PURE([[%language "c++" %glr-parser]], [[""]])
+AT_CHECK_API_PURE([[%language "c++" %glr-parser]], [[false]])
+AT_CHECK_API_PURE([[%language "java"]], [[true]])
+AT_CHECK_API_PURE([[%language "java"]], [[false]])
+
+AT_CLEANUP
+\end{verbatim}
+\end{frame}
+
+\begingroup
+\setbeamercolor{background canvas}{bg=craneorange!90}
+\begin{frame}
+    \begin{center}
+        \vspace{1cm}
+        {\Huge\color{black} {\fontencoding{T1}\fontfamily{anttlc}\fontseries{m}\fontshape{n} Thank you for your attention.}}
+    \end{center}
+\end{frame}
+\endgroup
 \end{document}
