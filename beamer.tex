@@ -446,56 +446,6 @@ Another, unrelated example:
   \end{verbatim}
 \end{frame}
 
-\begin{frame}
-  \frametitle{Dangling else problem}
-  \begin{itemize}
-      \item \texttt{if a then if b then c else d}
-      \item To whom does the else belong?
-      \item \texttt{if a then (if b then c else d)}
-      \item \texttt{if a then (if b then c) else d}
-      \item Shift/reduce conflict
-    \end{itemize}
-\end{frame}
-
-\begin{frame}[fragile]
-  \frametitle{Dangling else problem}
-\begin{verbatim}
-    stmt:
-      condition
-    | exp
-
-    condition:
-      "if" exp "then" stmt
-    | "if" exp "then" stmt "else" stmt
-\end{verbatim}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Dangling else problem}
-    \begin{itemize}
-      \item Precedence solution
-      \item \texttt{\%precedence "then"}
-      \item \texttt{\%precedence "else"}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Dangling else problem}
-    \begin{itemize}
-      \item Associativity solution
-      \item \texttt{\%right "then" "else"}
-    \end{itemize}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Dangling else problem}
-    \begin{itemize}
-      \item Changing the language
-      \item \texttt{if a then if b then c fi else d fi}
-      \item Often not acceptable
-    \end{itemize}
-\end{frame}
-
 \section{Getting started}
 
 \begingroup
@@ -507,6 +457,8 @@ Another, unrelated example:
     \end{center}
 \end{frame}
 \endgroup
+
+\subsection{Bison grammars}
 
 \begin{frame}
   \frametitle{Grammar}
@@ -651,6 +603,109 @@ sum: { printf ("%d\n", $0.val + $-1.val + $-2.val); } ;
       \item Can have values
       \item Warning: considered as elements in the \$n notation.
     \end{itemize}
+\end{frame}
+
+
+\subsection{Working with conflicts}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+  \begin{itemize}
+      \item \texttt{if a then if b then c else d}
+      \item To whom does the else belong?
+      \item \texttt{if a then (if b then c else d)}
+      \item \texttt{if a then (if b then c) else d}
+      \item Shift/reduce conflict
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Dangling else problem}
+\begin{verbatim}
+    stmt:
+      condition
+    | exp
+
+    condition:
+      "if" exp "then" stmt
+    | "if" exp "then" stmt "else" stmt
+\end{verbatim}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}
+      \item Precedence solution
+      \item \texttt{\%precedence "then"}
+      \item \texttt{\%precedence "else"}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}
+      \item Associativity solution
+      \item \texttt{\%right "then" "else"}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Dangling else problem}
+    \begin{itemize}
+      \item Changing the language
+      \item \texttt{if a then if b then c fi else d fi}
+      \item Often not acceptable
+    \end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]
+  \frametitle{Graphviz}
+\begin{verbatim}
+$ cat dangle.y
+%%
+exp: '0'
+   | "if" exp "then" exp
+   | "if" exp "then" exp "else" exp
+
+
+$ bison -g dangle.y
+dangle.y: avertissement: 1 conflit par
+          décalage/réduction [-Wconflicts-sr]
+
+
+$ dot -Tpng dangle.dot > dangle.png
+\end{verbatim}
+
+\pause
+
+\begin{verbatim}
+$ eog dangle.png
+\end{verbatim}
+\end{frame}
+
+\begin{frame}
+  \begin{center}
+    \includegraphics[scale=0.22]{else}
+  \end{center}
+\end{frame}
+
+\subsection{Living with conflicts}
+
+\begin{frame}
+  \frametitle{Living with conflicts}
+
+  \textit{You don't have to strive for zero conflicts.} Some are tolerable. For
+  example, in case of Shift/Reduce conflicts, \texttt{Bison}'s default action is
+  to shift, which might very well be one's intention.
+
+  \vfill
+
+  Also, the \textbf{Generalized LR} (GLR) parser performs a Breadth-First Search on all
+  possibilities when a conflict between several actions is present.
+
+  \vfill
+
+  Just use \texttt{\%glr-parser}.
 \end{frame}
 
 \section{GNU Bison internals}
